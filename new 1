@@ -1,0 +1,53 @@
+ # python 自动化安装
+ 进入 超级管理员
+ 1) 通过 wget 下载 安装包 源码
+ 2) 通过 tar 解压缩
+ 3) 通过 cd 进入 安装包
+ 4) 通过 make 编译 安装环境 
+ 
+ import sys, os
+ # 判断是否是 超级管理员
+if os.geteuid() !=0:
+     print "请切换为, 超级管理员"
+	 #exit()
+	 sys.exit(1)
+
+version = raw_input("输入安装的 版本号(2.7/3.6):")
+
+if version !='2.7' or version !='3.6':
+    print "版本号不对,2.7/3.6"
+	sys.exit(1)
+# python 官网 .tgz
+if version == '2.7':
+    url = "https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz"
+elif version == '3.6':
+    url = "https://www.python.org/ftp/python/3.5.2/Python-3.5.2.tgz"
+cmd = "wget " + url
+# 执行命令 返回状态
+ok = os.system(cmd)
+
+if ok != 0:
+    print "下载源码失败!请检查你的网络.."
+	sys.exit(1)
+#解压缩 tar -zxvf XXXX
+package_name = url.split("/")[-1]
+cmd = "tar -zxvf " + package_name
+ok = os.system(cmd)
+if ok != 0:
+   print "解压失败"
+   sys.exit(1)
+
+cmd = "cd " + package_name[:-4]
+ok = sys.system(cmd)
+if ok != 0:
+   print "进入文件夹失败!"
+   sys.exit(1)
+   
+# 安装 
+cmd = "./configure --prefix=/use/local/python && make && make install"
+#  ./configure && make && make test && make install
+ok = sys.system(cmd)
+if ok != 0:
+   print "安装失败!"
+   sys.exit(1)
+print "安装成功!"
